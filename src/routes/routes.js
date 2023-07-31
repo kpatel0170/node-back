@@ -1,9 +1,18 @@
 const express = require('express');
+const authRoute = require('./auth');
 
 const router = express.Router();
 
-router.get('/healthcheck', (req, res) => {
-  res.status(200).send('OK');
+const defaultRoutes = [
+  {
+    path: '/auth',
+    route: authRoute,
+  }
+];
+
+defaultRoutes.forEach((route) => {
+  router.use(route.path, route.route);
 });
+
 
 module.exports = router;
