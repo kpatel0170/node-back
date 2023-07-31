@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const routes = require('./routes/routes');
 
 const app = express();
 
@@ -16,5 +17,8 @@ const corsOpts = {
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
 };
 app.use(cors(corsOpts));
+
+// routes
+app.use('/api', routes);
 
 module.exports = app;
