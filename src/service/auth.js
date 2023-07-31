@@ -23,6 +23,28 @@ const createUser = async (name, email, password) => {
   }
 };
 
+const loginUser = async (email, password) => {
+  try {
+    // Check if the email is already registered
+    const existingUser = await UserModel.findOne({ email });
+    if (!existingUser) {
+      throw new Error('Email is not registered');
+    }
+
+    // Check if the password is correct
+    const isMatch = await existingUser.comparePassword(password);
+    if (!isMatch) {
+      throw new Error('Password is incorrect');
+    }
+
+    const sanitizedUser = omit(existingUser.toJSON(), 'password');
+    return sanitizedUser;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
-  createUser
+  createUser,
+  loginUser,
 };
