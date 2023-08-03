@@ -10,7 +10,6 @@ const pick = (object, keys) => {
   }, {});
 };
 
-
 const validate = (schema) => (req, res, next) => {
   const validSchema = pick(schema, ['params', 'query', 'body']);
   const object = pick(req, Object.keys(validSchema));

@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const passport = require("passport");
-const bodyParser = require("body-parser");
-const session = require("express-session");
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 const routes = require('./routes/routes');
 
 const app = express();
@@ -25,12 +25,14 @@ app.use(cors(corsOpts));
 
 // parse application/x-www-form-urlencoded
 // for easier testing with Postman or plain HTML forms
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  }),
+);
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 // routes
 app.use('/api', routes);

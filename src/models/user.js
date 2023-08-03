@@ -1,7 +1,10 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { v4: uuidv4 } = require('uuid');
 
 const { Schema } = mongoose;
+const roles = ['user', 'admin'];
 
 const userSchema = new Schema(
   {
@@ -20,13 +23,26 @@ const userSchema = new Schema(
       minlength: 8,
       private: true,
     },
+    services: {
+      facebook: String,
+      google: String,
+    },
+    role: {
+      type: String,
+      enum: roles,
+      default: 'user',
+    },
+    picture: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-userSchema.pre("save", async function (next) {
+userSchema.pre('save', async function (next) {
   const user = this;
 
   const saltWorkFactor = parseInt(process.env.SALT_WORK_FACTOR, 10);
@@ -44,6 +60,26 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, user.password).catch(() => false);
 };
 
-const UserModel = mongoose.model("User", userSchema);
+userSchema.statics = {
+  roles,
+
+  async oAuthLogin({ service, id, email, name, picture }) {
+    const user = await this.findOne({ $or: [{ [`services.${service}`]: id }, { email }] });
+    if (user) {
+      user.services[service] = id;
+      if (!user.name) user.name = name;
+      return user.save();
+    }
+    const password = uuidv4();
+    return this.create({
+      services: { [service]: id },
+      email,
+      password,
+      name,
+    });
+  },
+};
+
+const UserModel = mongoose.model('User', userSchema);
 
 module.exports = UserModel;

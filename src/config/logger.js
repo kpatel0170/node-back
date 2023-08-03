@@ -1,9 +1,8 @@
-const { createLogger, format, transports, exitOnError } = require('winston');
-const _ = require('lodash');
-const moment = require('moment-timezone');
 const fs = require('fs');
 const os = require('os');
 const cluster = require('cluster');
+const { createLogger, format, transports, exitOnError } = require('winston');
+const moment = require('moment-timezone');
 
 const timezone = 'North America/central';
 let timestamp = 'North America/regina';
@@ -33,7 +32,7 @@ const localFormat = format.combine(
   format.printf(({ level, message }) => {
     timestamp = moment().format('YYYY.MM.DD HH:mm:ss');
     return `[${timestamp}] ${level.toUpperCase().trim()} ${getHostAndProcessInfo()} ${message}`;
-  })
+  }),
 );
 
 const logger = createLogger({
@@ -43,7 +42,7 @@ const logger = createLogger({
     format.printf(({ level, message }) => {
       timestamp = moment().tz(timezone).format('DD.MM.YYYY HH:mm:ss');
       return `[${timestamp}] ${level.toUpperCase().padEnd(8)} ${getHostAndProcessInfo()} ${message}`;
-    })
+    }),
   ),
   transports: [
     new transports.Console({

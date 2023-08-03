@@ -13,10 +13,10 @@ let server;
 connect()
   .then(() => {
     server = app.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
+      logger.info(`Server listening on port ${port}`);
     });
   })
   .catch((e) => {
-    console.error(e);
+    logger.error(e);
     process.exit(1);
   });
