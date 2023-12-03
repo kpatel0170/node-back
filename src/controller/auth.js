@@ -41,7 +41,7 @@ const loginUser = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        success: false,
+        status: false,
         error: 'Missing required fields: email, password',
       });
     }

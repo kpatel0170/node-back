@@ -1,23 +1,22 @@
-const { omit } = require('lodash');
 const UserModel = require('../models/user');
 
 const createUser = async (name, email, password) => {
   try {
-    // Check if the email is already registered
+    // Check if the email is already registered in your database
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       throw new Error('Email is already registered');
     }
 
-    // Create the user
-    const user = await new UserModel({
+    // Create the user in your database
+    const newUser = new UserModel({
       name,
       email,
       password,
     });
-    await user.save();
-    const sanitizedUser = omit(user.toJSON(), 'password');
-    return sanitizedUser;
+    const savedUser = await newUser.save();
+
+    return savedUser; // Return the user created in your database
   } catch (error) {
     throw new Error(error.message);
   }
@@ -37,8 +36,11 @@ const loginUser = async (email, password) => {
       throw new Error('Password is incorrect');
     }
 
-    const sanitizedUser = omit(existingUser.toJSON(), 'password');
-    return sanitizedUser;
+    // Generate JWT token
+    const token = existingUser.generateJWT();
+
+    const sanitizedUser = existingUser.toJSON();
+    return { sanitizedUser, token };
   } catch (error) {
     throw new Error(error.message);
   }
