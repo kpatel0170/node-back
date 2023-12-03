@@ -1,12 +1,15 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const helmet = require('helmet');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const routes = require('./routes/routes');
 
 const app = express();
-const jwt_secret = process.env.JWT_SECRET;
+const jwt_secret = process.env.JWT_SECRET || 'secret';
 
 // parse json request body
 app.use(express.json());
@@ -34,7 +37,26 @@ app.use(
 // parse application/json
 app.use(bodyParser.json());
 
+// secure apps by setting various HTTP headers
+app.use(helmet());
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+require('./config/passport/googleStrategy')(passport);
+require('./config/passport/jwtStrategy')(passport);
+
 // routes
 app.use('/api', routes);
+
+// simple route
+app.get('/ping', (req, res) => {
+  return res.send({
+    error: false,
+    message: 'Server is healthy',
+  });
+});
+const BASE_URL = '/api/v1';
+// app.use(BASE_URL, require('./routes/routes'));
 
 module.exports = app;

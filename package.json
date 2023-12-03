@@ -9,8 +9,7 @@
     "dev": "nodemon ./src/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prettier": "prettier --check **/*.js",
-    "prettier:fix": "prettier --write **/*.js",
+    "format": "prettier --write **/*.js",
     "precommit": "eslint . --fix && prettier --write **/*.js"
   },
   "keywords": [],
@@ -24,6 +23,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "helmet": "^7.1.0",
     "http": "^0.0.1-security",
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
@@ -31,9 +31,8 @@
     "moment-timezone": "^0.5.43",
     "mongoose": "^7.4.1",
     "passport": "^0.6.0",
-    "passport-google-oauth": "^2.0.0",
+    "passport-google-oauth2": "^0.2.0",
     "passport-jwt": "^4.0.1",
-    "uuid": "^9.0.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {
