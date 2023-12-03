@@ -1,13 +1,12 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const logger = require('./logger');
 
-dotenv.config();
-
-const connect = async () => {
-  const dbUri = process.env.DB_URI;
+const connect = async (isProduction) => {
+  // DB Config
+  const dbConnection = isProduction ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;
   try {
-    await mongoose.connect(dbUri);
+    await mongoose.connect(dbConnection);
     logger.info('DB connected');
   } catch (error) {
     logger.error('Could not connect to db');
