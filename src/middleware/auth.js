@@ -1,6 +1,6 @@
 const passport = require('passport');
 
-function authentication(req, res, next) {
+function jwtAuthentication(req, res, next) {
   return passport.authenticate(
     'jwt',
     {
@@ -13,7 +13,31 @@ function authentication(req, res, next) {
       if (!user) {
         return res.status(401).send({
           STATUS: 'FAILURE',
-          MESSAGE: 'Unauthenticated',
+          MESSAGE: 'Unauthenticated (JWT)',
+          CODE: 401,
+        });
+      }
+      req.user = user;
+      next();
+    },
+  )(req, res, next);
+}
+
+function googleAuthentication(req, res, next) {
+  return passport.authenticate(
+    'google',
+    {
+      session: false,
+    },
+
+    (err, user, info) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.status(401).send({
+          STATUS: 'FAILURE',
+          MESSAGE: 'Unauthenticated (Google)',
           CODE: 401,
         });
       }
@@ -24,5 +48,6 @@ function authentication(req, res, next) {
 }
 
 module.exports = {
-  authentication,
+  jwtAuthentication,
+  googleAuthentication,
 };
