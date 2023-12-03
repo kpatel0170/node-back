@@ -4,8 +4,8 @@ const cluster = require('cluster');
 const { createLogger, format, transports, exitOnError } = require('winston');
 const moment = require('moment-timezone');
 
-const timezone = 'North America/central';
-let timestamp = 'North America/regina';
+const timezone = 'North America/New_York';
+let timestamp = 'North America/Regina';
 
 const getHostAndProcessInfo = () => `[${os.hostname()} ${cluster.isWorker ? `WORKER #${cluster.worker.id}` : 'MASTER'}]`;
 
@@ -40,7 +40,7 @@ const logger = createLogger({
     format.timestamp(),
     format.simple(),
     format.printf(({ level, message }) => {
-      timestamp = moment().tz(timezone).format('DD.MM.YYYY HH:mm:ss');
+      timestamp = moment().format('DD.MM.YYYY HH:mm:ss');
       return `[${timestamp}] ${level.toUpperCase().padEnd(8)} ${getHostAndProcessInfo()} ${message}`;
     }),
   ),
