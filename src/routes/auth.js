@@ -1,20 +1,52 @@
+require('dotenv').config();
 const express = require('express');
+const passport = require('passport');
 const authController = require('../controller/auth');
 const authValidation = require('../validation/auth');
 const validate = require('../middleware/validate');
-const { callGoogleAuth, callBackGoogle } = require('../controller/auth');
-const googleConfig = require('../config/googleConfig');
+const authMiddleware = require('../middleware/auth');
 
 const authRouter = express.Router();
 
-authRouter.post('/register', validate(authValidation.register), authController.registerUser);
+authRouter.post(
+  '/register',
+  validate(authValidation.register),
+  authMiddleware.jwtAuthentication,
+  authController.registerUser,
+);
 authRouter.post('/login', validate(authValidation.login), authController.loginUser);
-
-// Api call back function
-authRouter.get('/google/callback', googleConfig.authenticate('google', { failureRedirect: '/error' }), function (req, res) {
-  res.redirect('/success');
+authRouter.get('/logout', (req, res) => {
+  req.logout();
+  res.send(false);
 });
 
-authRouter.get('/google', googleConfig.authenticate('google', { scope: ['profile', 'email'] }), function (req, res) {});
+authRouter.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  }),
+);
+
+// // Route for initiating Google OAuth authentication for registration
+// authRouter.get('/google/register', authMiddleware.googleAuthentication, authController.handleGoogleCallbackForRegistration);
+
+// // Route for initiating Google OAuth authentication for login
+// authRouter.get('/google/login', authMiddleware.googleAuthentication, authController.handleGoogleCallbackForLogin);
+
+// Callback route for Google OAuth authentication
+const clientUrl = process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL_PROD : process.env.CLIENT_URL_DEV;
+
+authRouter.get(
+  '/google/callback',
+  passport.authenticate('google', {
+    failureRedirect: '/',
+    session: false,
+  }),
+  (req, res) => {
+    const token = req.user.generateJWT();
+    res.cookie('x-auth-cookie', token);
+    res.redirect('/success');
+  },
+);
 
 module.exports = authRouter;
