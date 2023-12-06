@@ -3,7 +3,7 @@ const https = require('https'); // Import the 'https' module
 const { readFileSync } = require('fs'); // Import the 'readFileSync' method from 'fs'
 
 const app = require('./app');
-const connectDB = require('./config/connect');
+const connectDB = require('./config/connectDB');
 const logger = require('./config/logger');
 
 let server; // Declare 'server' variable globally to access it outside the scope

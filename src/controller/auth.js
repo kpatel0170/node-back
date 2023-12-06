@@ -2,19 +2,19 @@ const moment = require('moment-timezone');
 const authService = require('../service/auth');
 const logger = require('../config/logger');
 
-const RefreshToken = require('../models/refreshToken');
+// const RefreshToken = require('../models/refreshToken');
 
-function generateTokenResponse(user, accessToken) {
-  const tokenType = 'Bearer';
-  const refreshToken = RefreshToken.generate(user).token;
-  const expiresIn = moment().add('2', 'hours');
-  return {
-    tokenType,
-    accessToken,
-    refreshToken,
-    expiresIn,
-  };
-}
+// function generateTokenResponse(user, accessToken) {
+//   const tokenType = 'Bearer';
+//   const refreshToken = RefreshToken.generate(user).token;
+//   const expiresIn = moment().add('2', 'hours');
+//   return {
+//     tokenType,
+//     accessToken,
+//     refreshToken,
+//     expiresIn,
+//   };
+// }
 
 const registerUser = async (req, res) => {
   try {
