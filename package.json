@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write **/*.js",
-    "precommit": "eslint . --fix && prettier --write **/*.js"
+    "precommit": "eslint . --fix && prettier --write **/*.js",
+    "build": "rm -rf build && prettier --write src/ "
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,7 @@
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.43",
     "mongoose": "^7.4.1",
+    "morgan": "^1.10.0",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-jwt": "^4.0.1",

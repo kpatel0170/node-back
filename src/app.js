@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const helmet = require('helmet');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const morgan = require('morgan');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -17,6 +19,9 @@ app.use(session({ secret: jwt_secret, saveUninitialized: true, resave: true }));
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
+
+// log HTTP requests
+app.use(morgan('combined'));
 
 // enable cors
 app.use(cors());
@@ -53,7 +58,7 @@ app.use('/api', routes);
 app.get('/ping', (req, res) => {
   return res.send({
     error: false,
-    message: 'Server is healthy',
+    message: 'Server is up',
   });
 });
 const BASE_URL = '/api/v1';
