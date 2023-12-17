@@ -1,13 +1,13 @@
-require('dotenv').config();
-const https = require('https'); // Import the 'https' module
-const { readFileSync } = require('fs'); // Import the 'readFileSync' method from 'fs'
+require("dotenv").config();
+const https = require("https"); // Import the 'https' module
+const { readFileSync } = require("fs"); // Import the 'readFileSync' method from 'fs'
 
-const app = require('./app');
-const connectDB = require('./config/connectDB');
-const logger = require('./config/logger');
+const app = require("./app");
+const connectDB = require("./config/connectDB");
+const logger = require("./config/logger");
 
 let server; // Declare 'server' variable globally to access it outside the scope
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 // Connect to MongoDB and start the server
 connectDB(isProduction)
@@ -44,7 +44,7 @@ connectDB(isProduction)
   });
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
+process.on("unhandledRejection", (err, promise) => {
   logger.error(`Error: ${err.message}`);
   if (server) {
     server.close(() => process.exit(1));
