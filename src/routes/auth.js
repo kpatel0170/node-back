@@ -45,7 +45,6 @@ const clientUrl =
     ? process.env.CLIENT_URL_PROD
     : process.env.CLIENT_URL_DEV;
 
-
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", {
