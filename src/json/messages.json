@@ -1,6 +1,6 @@
 {
     "AUTH_MESSAGES": {
-        "FILL_DETAILS": "Please fill all the details",
+    "FILL_DETAILS": "Please fill all the details",
     "LOGIN_SUCCESS": "Login Successfully",
     "REGISTER_SUCCESS": "Register Successfully",
     "FAILED_LOGIN": "Sorry, the email / password combination is not valid. Please try again.\nIf the problem persists, kindly call support.",
@@ -10,7 +10,7 @@
     "EMAIL_NOT_EXISTS": "Sorry, the specified email is not registered in the system.\nIf you feel this is not correct, kindly call support.",
     "INVALID_EMAIL": "Invalid Email so please enter correct email",
     "INVALID_PASSWORD": "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.",
-    
+    "UNAUTHENTICATED": "Sorry, you are not authenticated to perform this action.\nIf you feel this is not correct, kindly call support.",
     "INVALID_PARAMETERS": "Sorry, the request could not be processed as because of invalid parameters.",
     "INVALID_PHONE": "Sorry! The specified phone number is invalid.",
     "INVALID_TOKEN_VERIFICATION": "Sorry! The verification token is invalid.",

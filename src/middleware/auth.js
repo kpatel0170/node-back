@@ -1,33 +1,33 @@
-const passport = require('passport');
+const passport = require("passport");
+const enums = require("../json/enums.json");
+const messages = require("../json/messages.json");
 
 function jwtAuthentication(req, res, next) {
   return passport.authenticate(
-    'jwt',
+    "jwt",
     {
-      session: false,
+      session: false
     },
     (err, user, info) => {
       if (err) {
         return next(err);
       }
       if (!user) {
-        return res.status(401).send({
-          STATUS: 'FAILURE',
-          MESSAGE: 'Unauthenticated (JWT)',
-          CODE: 401,
-        });
+        return res
+          .status(enums.HTTP_CODES.UNAUTHORIZED)
+          .send({ error: messages.AUTH_MESSAGES.UNAUTHENTICATED });
       }
       req.user = user;
       next();
-    },
+    }
   )(req, res, next);
 }
 
 function googleAuthentication(req, res, next) {
   return passport.authenticate(
-    'google',
+    "google",
     {
-      session: false,
+      session: false
     },
 
     (err, user, info) => {
@@ -35,19 +35,17 @@ function googleAuthentication(req, res, next) {
         return next(err);
       }
       if (!user) {
-        return res.status(401).send({
-          STATUS: 'FAILURE',
-          MESSAGE: 'Unauthenticated (Google)',
-          CODE: 401,
-        });
+        return res
+          .status(enums.HTTP_CODES.UNAUTHORIZED)
+          .send({ error: messages.AUTH_MESSAGES.UNAUTHENTICATED });
       }
       req.user = user;
       next();
-    },
+    }
   )(req, res, next);
 }
 
 module.exports = {
   jwtAuthentication,
-  googleAuthentication,
+  googleAuthentication
 };

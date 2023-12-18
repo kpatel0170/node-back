@@ -25,16 +25,18 @@ const registerUser = async (req, res) => {
     if (!name || !email || !password) {
       return res
         .status(enums.HTTP_CODES.BAD_REQUEST)
-        .json({ message: messages.FILL_DETAILS });
+        .json({ message: messages.AUTH_MESSAGES.FILL_DETAILS });
     }
 
     const user = await authService.createUser(name, email, password);
     return res
       .status(enums.HTTP_CODES.OK)
-      .json({ message: messages.REGISTER_SUCCESS, data: user });
+      .json({ message: messages.AUTH_MESSAGES.REGISTER_SUCCESS, data: user });
   } catch (error) {
     logger.error(error.message);
-    return res.status(409).json({ status: false, error: error.message });
+    return res
+      .status(enums.HTTP_CODES.DUPLICATE_VALUE)
+      .json({ error: error.message });
   }
 };
 
@@ -45,14 +47,18 @@ const loginUser = async (req, res) => {
     if (!email || !password) {
       return res
         .status(enums.HTTP_CODES.BAD_REQUEST)
-        .json({ message: messages.FILL_DETAILS });
+        .json({ message: messages.AUTH_MESSAGES.FILL_DETAILS });
     }
 
     const user = await authService.loginUser(email, password);
-    return res.status(200).json({ status: true, data: user });
+    return res
+      .status(enums.HTTP_CODES.OK)
+      .json({ message: messages.AUTH_MESSAGES.LOGIN_SUCCESS, data: user });
   } catch (error) {
     logger.error(error.message);
-    return res.status(409).json({ status: false, error: error.message });
+    return res
+      .status(enums.HTTP_CODES.DUPLICATE_VALUE)
+      .json({ error: error.message });
   }
 };
 

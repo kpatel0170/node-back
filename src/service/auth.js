@@ -1,24 +1,25 @@
-const UserModel = require('../models/user');
+const UserModel = require("../models/user");
+const messages = require("../json/messages.json");
 
 const createUser = async (name, email, password) => {
   try {
     // Check if the email is already registered in your database
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
-      throw new Error('Email is already registered');
+      throw new Error(messages.AUTH_MESSAGES.EMAIL_EXISTS);
     }
 
-    // Create the user in your database
     const newUser = new UserModel({
       name,
       email,
-      password,
+      password
     });
     const savedUser = await newUser.save();
 
-    return savedUser; // Return the user created in your database
+    return savedUser;
   } catch (error) {
-    throw new Error(error.message);
+    const errorMessage = error.message || messages.GENERAL; // Fallback message
+    throw new Error(errorMessage);
   }
 };
 
@@ -27,13 +28,13 @@ const loginUser = async (email, password) => {
     // Check if the email is already registered
     const existingUser = await UserModel.findOne({ email });
     if (!existingUser) {
-      throw new Error('Email is not registered');
+      throw new Error(messages.AUTH_MESSAGES.EMAIL_NOT_EXISTS);
     }
 
     // Check if the password is correct
     const isMatch = await existingUser.comparePassword(password);
     if (!isMatch) {
-      throw new Error('Password is incorrect');
+      throw new Error(messages.AUTH_MESSAGES.INVALID_PASSWORD);
     }
 
     // Generate JWT token
@@ -42,11 +43,12 @@ const loginUser = async (email, password) => {
     const sanitizedUser = existingUser.toJSON();
     return { sanitizedUser, token };
   } catch (error) {
-    throw new Error(error.message);
+    const errorMessage = error.message || messages.GENERAL; // Fallback message
+    throw new Error(errorMessage);
   }
 };
 
 module.exports = {
   createUser,
-  loginUser,
+  loginUser
 };
