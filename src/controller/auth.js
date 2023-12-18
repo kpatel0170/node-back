@@ -1,8 +1,10 @@
-const moment = require("moment-timezone");
-const authService = require("../service/auth");
-const logger = require("../config/logger");
-const enums = require("../json/enums.json");
-const messages = require("../json/messages.json");
+import moment from "moment-timezone";
+import authService from "../service/auth.js";
+import logger from "../lib/logger.js";
+import * as enums from "../json/enums.json" assert { type: "json" };
+import * as messages from "../json/messages.json" assert { type: "json" };
+
+
 
 // const RefreshToken = require('../models/refreshToken');
 
@@ -92,7 +94,7 @@ const resetPasswordRequest = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   registerUser,
   loginUser,
   resetPassword,

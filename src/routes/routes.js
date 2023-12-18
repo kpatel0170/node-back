@@ -1,32 +1,8 @@
-const express = require('express');
-const authRoute = require('./auth');
+import express from "express";
+import authRoutes from "#routes/auth";
 
-const router = express.Router();
+// prettier-ignore
+const router = express.Router()
+  .use("/auth", authRoutes);
 
-const defaultRoutes = [
-  {
-    path: '/auth',
-    route: authRoute,
-  },
-];
-
-defaultRoutes.forEach((route) => {
-  router.use(route.path, route.route);
-});
-
-// const devRoutes = [
-//   // routes available only in development mode
-//   {
-//     // Path: server\src\routes\routes.js
-//     // Compare this snippet from server\src\routes\docs.route.js:
-
-//     path: '/docs',
-//     route: docsRoute,
-//   },
-// ];
-
-// devRoutes.forEach((route) => {
-//   router.use(route.path, route.route);
-// });
-
-module.exports = router;
+export default router;

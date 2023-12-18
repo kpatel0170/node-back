@@ -1,33 +1,34 @@
-const passport = require('passport');
+import passport from "passport";
+// eslint-disable-next-line
+import * as enums from "../json/enums.json" assert { type: "json" };
+import * as messages from "../json/messages.json" assert { type: "json" };
 
 function jwtAuthentication(req, res, next) {
   return passport.authenticate(
-    'jwt',
+    "jwt",
     {
-      session: false,
+      session: false
     },
     (err, user, info) => {
       if (err) {
         return next(err);
       }
       if (!user) {
-        return res.status(401).send({
-          STATUS: 'FAILURE',
-          MESSAGE: 'Unauthenticated (JWT)',
-          CODE: 401,
-        });
+        return res
+          .status(enums.HTTP_CODES.UNAUTHORIZED)
+          .send({ message: messages.AUTH_MESSAGES.UNAUTHENTICATED });
       }
       req.user = user;
       next();
-    },
+    }
   )(req, res, next);
 }
 
 function googleAuthentication(req, res, next) {
   return passport.authenticate(
-    'google',
+    "google",
     {
-      session: false,
+      session: false
     },
 
     (err, user, info) => {
@@ -35,19 +36,17 @@ function googleAuthentication(req, res, next) {
         return next(err);
       }
       if (!user) {
-        return res.status(401).send({
-          STATUS: 'FAILURE',
-          MESSAGE: 'Unauthenticated (Google)',
-          CODE: 401,
-        });
+        return res
+          .status(enums.HTTP_CODES.UNAUTHORIZED)
+          .send({ message: messages.AUTH_MESSAGES.UNAUTHENTICATED });
       }
       req.user = user;
       next();
-    },
+    }
   )(req, res, next);
 }
 
-module.exports = {
+export default {
   jwtAuthentication,
-  googleAuthentication,
+  googleAuthentication
 };
