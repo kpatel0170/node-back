@@ -3,6 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
+  "imports": {
+    "#config": "./src/config.js",
+    "#controller/*": "./src/controller/*.js",
+    "#enums/*": "./src/enums/*.json",
+    "#errors/*": "./src/errors/*.error.js",
+    "#lib/*": "./src/lib/*.js",
+    "#middlewares/*": "./src/middlewares/*.js",
+    "#models/*": "./src/models/*.js",
+    "#routes/*": "./src/routes/*.js",
+    "#repositories/*": "./src/repositories/*.repository.js",
+    "#service/*": "./src/service/*.js",
+    "#validation/*": "./src/validation/*.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/server.js",
@@ -11,7 +25,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write **/*.js",
     "precommit": "eslint . --fix && prettier --write '**/**/*.js'",
-    "build": "rm -rf build && prettier --write src/ "
+    "build": "rm -rf build && prettier --write src/ ",
+    "docs": "apidoc -i src -o docs"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +36,9 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "envalid": "^8.0.0",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "express-session": "^1.17.3",
     "helmet": "^7.1.0",
     "http": "^0.0.1-security",
@@ -37,6 +54,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
+    "apidoc": "^1.2.0",
     "eslint": "^8.46.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-react": "^7.33.2",

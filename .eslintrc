@@ -31,8 +31,10 @@
     "consistent-return": "off",
     "no-underscore-dangle": "off",
     "no-use-before-define": "off",
-    "object-curly-newline": "off"
-
-
-  }
+    "object-curly-newline": "off",
+    "unused-imports/no-unused-imports": "off",
+    "import/no-import-module-exports": "off",
+    "import/no-unresolved": "off",
+    "import/extensions": "off"
+}
 }
