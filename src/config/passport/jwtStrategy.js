@@ -10,7 +10,7 @@ const secretOrKey = isProduction
 
 const jwtLogin = new JwtStrategy(
   {
-    jwtFromRequest: ExtractJwt.fromHeader("x-auth-token"),
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey
   },
   async (payload, done) => {
