@@ -2,9 +2,9 @@ require("dotenv").config();
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
-const logger = require("../logger");
+const logger = require("../../lib/logger");
 
-const User = require("../../models/user");
+const User = require("../../models/user.cjs");
 
 // eslint-disable-next-line operator-linebreak
 const serverUrl =

@@ -1,7 +1,7 @@
 require("dotenv").config();
 const JwtStrategy = require("passport-jwt").Strategy;
 const { ExtractJwt } = require("passport-jwt");
-const User = require("../../models/user");
+const User = require("../../models/user.cjs");
 
 const isProduction = process.env.NODE_ENV === "production";
 const secretOrKey = isProduction
