@@ -1,30 +1,33 @@
-require('dotenv').config();
-const express = require('express');
-const passport = require('passport');
-const authController = require('../controller/auth');
-const authValidation = require('../validation/auth');
-const validate = require('../middleware/validate');
-const authMiddleware = require('../middleware/auth');
+require("dotenv").config();
+const express = require("express");
+const passport = require("passport");
+const authController = require("../controller/auth");
+const authValidation = require("../validation/auth");
+const validate = require("../middleware/validate");
+const authMiddleware = require("../middleware/auth");
 
 const authRouter = express.Router();
 
 authRouter.post(
-  '/register',
+  "/register",
   validate(authValidation.register),
-  authMiddleware.jwtAuthentication,
-  authController.registerUser,
+  authController.registerUser
 );
-authRouter.post('/login', validate(authValidation.login), authController.loginUser);
-authRouter.get('/logout', (req, res) => {
+authRouter.post(
+  "/login",
+  validate(authValidation.login),
+  authController.loginUser
+);
+authRouter.get("/logout", (req, res) => {
   req.logout();
   res.send(false);
 });
 
 authRouter.get(
-  '/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  }),
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"]
+  })
 );
 
 // // Route for initiating Google OAuth authentication for registration
@@ -34,19 +37,22 @@ authRouter.get(
 // authRouter.get('/google/login', authMiddleware.googleAuthentication, authController.handleGoogleCallbackForLogin);
 
 // Callback route for Google OAuth authentication
-const clientUrl = process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL_PROD : process.env.CLIENT_URL_DEV;
+const clientUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.CLIENT_URL_PROD
+    : process.env.CLIENT_URL_DEV;
 
 authRouter.get(
-  '/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/',
-    session: false,
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/",
+    session: false
   }),
   (req, res) => {
     const token = req.user.generateJWT();
-    res.cookie('x-auth-cookie', token);
-    res.redirect('/success');
-  },
+    res.cookie("x-auth-cookie", token);
+    res.redirect("/success");
+  }
 );
 
 module.exports = authRouter;

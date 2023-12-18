@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 // eslint-disable-next-line import/no-extraneous-dependencies
 // const { v4: uuidv4 } = require('uuid');
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 // const { join } = require('path');
 
 const { Schema } = mongoose;
-const roles = ['user', 'admin'];
+const roles = ["user", "admin"];
 
 const userSchema = new Schema(
   {
@@ -15,7 +15,7 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
-      lowercase: true,
+      lowercase: true
     },
     name: { type: String, required: true, trim: true },
     password: {
@@ -23,34 +23,34 @@ const userSchema = new Schema(
       required: true,
       trim: true,
       minlength: 8,
-      private: true,
+      private: true
     },
     services: {
       facebook: String,
-      google: String,
+      google: String
     },
     // google
     googleId: {
       type: String,
       unique: true,
-      sparse: true,
+      sparse: true
     },
     role: {
       type: String,
       enum: roles,
-      default: 'user',
+      default: "user"
     },
     picture: {
       type: String,
-      trim: true,
-    },
+      trim: true
+    }
   },
   {
-    timestamps: true,
-  },
+    timestamps: true
+  }
 );
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   const user = this;
 
   const saltWorkFactor = parseInt(process.env.SALT_WORK_FACTOR, 10);
@@ -92,18 +92,20 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-const isProduction = process.env.NODE_ENV === 'production';
-const secretOrKey = isProduction ? process.env.JWT_SECRET_PROD : process.env.JWT_SECRET_DEV;
+const isProduction = process.env.NODE_ENV === "production";
+const secretOrKey = isProduction
+  ? process.env.JWT_SECRET_PROD
+  : process.env.JWT_SECRET_DEV;
 
 userSchema.methods.generateJWT = function () {
   const token = jwt.sign(
     {
-      expiresIn: '12h',
+      expiresIn: "12h",
       id: this._id,
       provider: this.provider,
-      email: this.email,
+      email: this.email
     },
-    secretOrKey,
+    secretOrKey
   );
   return token;
 };
@@ -128,6 +130,6 @@ userSchema.methods.generateJWT = function () {
 //   },
 // };
 
-const UserModel = mongoose.model('User', userSchema);
+const UserModel = mongoose.model("User", userSchema);
 
 module.exports = UserModel;
