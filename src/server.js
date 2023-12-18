@@ -1,54 +1,58 @@
-require("dotenv").config();
-const https = require("https"); // Import the 'https' module
-const { readFileSync } = require("fs"); // Import the 'readFileSync' method from 'fs'
+/* eslint-disable import/extensions */
+import http from "node:https";
+import config from "#config";
+import * as database from "#lib/database";
+import logger from "#lib/logger";
+import app from "#lib/app";
 
-const app = require("./app");
-const connectDB = require("./config/connectDB");
-const logger = require("./config/logger");
+const { port } = config;
+const server = http.createServer(app);
 
-let server; // Declare 'server' variable globally to access it outside the scope
-const isProduction = process.env.NODE_ENV === "production";
+export default async function main() {
+  try {
+    await startServer();
+  } catch (err) {
+    logger.fatal(err);
+    process.exit(1);
+  }
+}
 
-// Connect to MongoDB and start the server
-connectDB(isProduction)
-  .then(() => {
-    if (isProduction) {
-      // Serve static assets if in production
-      // Set static folder (if needed)
-      // app.use(express.static(join(__dirname, '../../client/build')));
+async function startServer() {
+  setupErrorHandling();
+  await database.connect(config.mongo.uri);
 
-      // app.get('*', (req, res) => {
-      //   res.sendFile(resolve(__dirname, '../..', 'client', 'build', 'index.html'));
-      // });
+  server.listen(port, onListening);
+}
 
-      const port = process.env.PORT || 80;
-      app.listen(port, () => logger.info(`Server started on port ${port}`));
-    } else {
-      const port = process.env.PORT || 5000;
+function onListening() {
+  logger.info({ msg: `listening on http://localhost:${port}`, config });
+}
 
-      // const httpsOptions = {
-      //   key: readFileSync(resolve(__dirname, '../security/cert.key')),
-      //   cert: readFileSync(resolve(__dirname, '../security/cert.pem')),
-      // };
+async function onSignal() {
+  logger.info("server is starting cleanup");
+  database
+    .disconnect()
+    .then(() => logger.info("database disconnected"))
+    .catch((err) => logger.error({ err, msg: "error during disconnection" }));
+}
 
-      server = app.listen(port, () => {
-        logger.info(`HTTPS server running at ${port}`);
-        // import all_routes from 'express-list-endpoints';
-        // console.log(all_routes(app));
-      });
-    }
-  })
-  .catch((e) => {
-    logger.error(e);
+async function onShutdown() {
+  logger.info("cleanup finished, server is shutting down");
+}
+
+function setupErrorHandling() {
+  process.on("unhandledRejection", (err, promise) => {
+    logger.fatal({ err, msg: `Unhandled Rejection at: ${promise}` });
+    // send error to your error tracking software here
     process.exit(1);
   });
 
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err, promise) => {
-  logger.error(`Error: ${err.message}`);
-  if (server) {
-    server.close(() => process.exit(1));
-  } else {
+  process.on("uncaughtException", (err, origin) => {
+    logger.fatal({
+      err,
+      msg: `Uncaught Exception: ${err.message} at: ${origin}`
+    });
+    // send error to your error tracking software here
     process.exit(1);
-  }
-});
+  });
+}
