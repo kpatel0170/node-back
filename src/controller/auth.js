@@ -62,45 +62,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-const resetPassword = async (req, res) => {
-  try {
-    const { email, password, token } = req.body;
-    if (!email || !password || !token) {
-      return res
-        .status(enums.HTTP_CODES.BAD_REQUEST)
-        .json({ message: messages.FILL_DETAILS });
-    }
-
-    const user = await authService.resetPassword(email, password, token);
-    return res.status(enums.HTTP_CODES.OK).json(user);
-  } catch (error) {
-    logger.error(error.message);
-    return res
-      .status(enums.HTTP_CODES.DUPLICATE_VALUE)
-      .json({ status: false, error: error.message });
-  }
-};
-
-const resetPasswordRequest = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res
-        .status(enums.HTTP_CODES.BAD_REQUEST)
-        .json({ message: messages.FILL_DETAILS });
-    }
-
-    const user = await authService.resetPasswordRequest(email);
-    return res.status(200).json({ status: true, data: user });
-  } catch (error) {
-    logger.error(error.message);
-    return res.status(409).json({ status: false, error: error.message });
-  }
-};
-
 module.exports = {
   registerUser,
-  loginUser,
-  resetPassword,
-  resetPasswordRequest
+  loginUser
 };
