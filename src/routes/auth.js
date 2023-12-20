@@ -13,11 +13,13 @@ authRouter.post(
   validate(authValidation.register),
   authController.registerUser
 );
+
 authRouter.post(
   "/login",
   validate(authValidation.login),
   authController.loginUser
 );
+
 authRouter.get("/logout", (req, res) => {
   req.logout();
   res.send(false);
@@ -37,6 +39,7 @@ authRouter.get(
 // authRouter.get('/google/login', authMiddleware.googleAuthentication, authController.handleGoogleCallbackForLogin);
 
 // Callback route for Google OAuth authentication
+// eslint-disable-next-line operator-linebreak
 const clientUrl =
   process.env.NODE_ENV === "production"
     ? process.env.CLIENT_URL_PROD

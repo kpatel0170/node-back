@@ -1,6 +1,7 @@
 const express = require("express");
 const authRoute = require("./auth");
 const userRoute = require("./user");
+const docsRoute = require("./docs");
 
 const router = express.Router();
 
@@ -19,19 +20,19 @@ defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
 
-// const devRoutes = [
-//   // routes available only in development mode
-//   {
-//     // Path: server\src\routes\routes.js
-//     // Compare this snippet from server\src\routes\docs.route.js:
+const devRoutes = [
+  // routes available only in development mode
+  {
+    // Path: server\src\routes\routes.js
+    // Compare this snippet from server\src\routes\docs.route.js:
 
-//     path: '/docs',
-//     route: docsRoute,
-//   },
-// ];
+    path: "/docs",
+    route: docsRoute
+  }
+];
 
-// devRoutes.forEach((route) => {
-//   router.use(route.path, route.route);
-// });
+devRoutes.forEach((route) => {
+  router.use(route.path, route.route);
+});
 
 module.exports = router;

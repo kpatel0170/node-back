@@ -2,6 +2,7 @@ const Joi = require("joi");
 const enums = require("../json/enums.json");
 
 const pick = (object, keys) =>
+  // eslint-disable-next-line implicit-arrow-linebreak
   keys.reduce((obj, key) => {
     if (object && Object.prototype.hasOwnProperty.call(object, key)) {
       // eslint-disable-next-line no-param-reassign
