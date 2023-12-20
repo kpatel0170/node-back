@@ -1,21 +1,30 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-// eslint-disable-next-line import/no-extraneous-dependencies
 const helmet = require("helmet");
-// eslint-disable-next-line import/no-extraneous-dependencies
 const morgan = require("morgan");
 const passport = require("passport");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const routes = require("./routes/routes");
+// const multer = require("multer");
+// const path = require("path");
+const compression = require("compression");
+const path = require("path");
+const routes = require("./routes/api");
+const { errorHandler } = require("./middleware/error");
+const config = require("./config/config");
+const ApiError = require("./utils/ApiError");
+const enums = require("./json/enums.json");
+
+// const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 const app = express();
-const jwtSecret = process.env.JWT_SECRET || "secret";
 
 // parse json request body
 app.use(express.json());
-app.use(session({ secret: jwtSecret, saveUninitialized: true, resave: true }));
+app.use(
+  session({ secret: config.jwt.secret, saveUninitialized: true, resave: true })
+);
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
@@ -45,6 +54,9 @@ app.use(bodyParser.json());
 // secure apps by setting various HTTP headers
 app.use(helmet());
 
+// gzip compression
+app.use(compression());
+
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -60,6 +72,14 @@ app.get("/ping", (req, res) => {
     message: "Server is up"
   });
 });
+
+// send back a 404 error for any unknown api request
+app.use((req, res, next) => {
+  next(new ApiError(enums.HTTP_CODES.NOT_FOUND, "Not found"));
+});
+
+// error handler, send stacktrace only during development
+app.use(errorHandler);
 
 const BASE_URL = "/api/v1";
 // app.use(BASE_URL, require('./routes/routes'));

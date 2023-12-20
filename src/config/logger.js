@@ -8,7 +8,6 @@ const timezone = "North America/New_York";
 let timestamp = "North America/Regina";
 
 const getHostAndProcessInfo = () =>
-  // eslint-disable-next-line implicit-arrow-linebreak
   `[${os.hostname()} ${
     cluster.isWorker ? `WORKER #${cluster.worker.id}` : "MASTER"
   }]`;

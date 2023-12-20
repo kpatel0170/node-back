@@ -1,68 +1,72 @@
-const moment = require("moment-timezone");
-const authService = require("../service/auth");
-const logger = require("../config/logger");
+const authService = require("../service/authService");
+const userService = require("../service/userService");
+const tokenService = require("../service/tokenService");
+const emailService = require("../service/emailService");
 const enums = require("../json/enums.json");
 const messages = require("../json/messages.json");
+const catchAsync = require("../utils/catchAsync");
 
-// const RefreshToken = require('../models/refreshToken');
+const register = catchAsync(async (req, res) => {
+  const user = await userService.createUser(req.body);
+  const tokens = await tokenService.generateAuthTokens(user);
+  return res
+    .status(enums.HTTP_CODES.OK)
+    .json({ message: messages.AUTH_MESSAGES.REGISTER_SUCCESS, user, tokens });
+});
 
-// function generateTokenResponse(user, accessToken) {
-//   const tokenType = 'Bearer';
-//   const refreshToken = RefreshToken.generate(user).token;
-//   const expiresIn = moment().add('2', 'hours');
-//   return {
-//     tokenType,
-//     accessToken,
-//     refreshToken,
-//     expiresIn,
-//   };
-// }
+const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
 
-const registerUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+  const user = await authService.loginUserWithEmailAndPassword(email, password);
+  const tokens = await tokenService.generateAuthTokens(user);
+  return res
+    .status(enums.HTTP_CODES.OK)
+    .json({ message: messages.AUTH_MESSAGES.LOGIN_SUCCESS, user, tokens });
+});
 
-    if (!name || !email || !password) {
-      return res
-        .status(enums.HTTP_CODES.BAD_REQUEST)
-        .json({ message: messages.AUTH_MESSAGES.FILL_DETAILS });
-    }
+const logout = catchAsync(async (req, res) => {
+  await authService.logout(req.body.refreshToken);
+  res.status(enums.HTTP_CODES.NO_CONTENT_FOUND).send();
+});
 
-    const user = await authService.createUser(name, email, password);
-    return res
-      .status(enums.HTTP_CODES.OK)
-      .json({ message: messages.AUTH_MESSAGES.REGISTER_SUCCESS, data: user });
-  } catch (error) {
-    logger.error(error.message);
-    return res
-      .status(enums.HTTP_CODES.DUPLICATE_VALUE)
-      .json({ error: error.message });
-  }
-};
+const refreshTokens = catchAsync(async (req, res) => {
+  const tokens = await authService.refreshAuth(req.body.refreshToken);
+  res.send({ ...tokens });
+});
 
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+const forgotPassword = catchAsync(async (req, res) => {
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(
+    req.body.email
+  );
+  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  res.status(enums.HTTP_CODES.NO_CONTENT_FOUND).send();
+});
 
-    if (!email || !password) {
-      return res
-        .status(enums.HTTP_CODES.BAD_REQUEST)
-        .json({ message: messages.AUTH_MESSAGES.FILL_DETAILS });
-    }
+const resetPassword = catchAsync(async (req, res) => {
+  await authService.resetPassword(req.query.token, req.body.password);
+  res.status(enums.HTTP_CODES.NO_CONTENT_FOUND).send();
+});
 
-    const user = await authService.loginUser(email, password);
-    return res
-      .status(enums.HTTP_CODES.OK)
-      .json({ message: messages.AUTH_MESSAGES.LOGIN_SUCCESS, data: user });
-  } catch (error) {
-    logger.error(error.message);
-    return res
-      .status(enums.HTTP_CODES.DUPLICATE_VALUE)
-      .json({ error: error.message });
-  }
-};
+const sendVerificationEmail = catchAsync(async (req, res) => {
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(
+    req.user
+  );
+  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+  res.status(enums.HTTP_CODES.NO_CONTENT_FOUND).send();
+});
+
+const verifyEmail = catchAsync(async (req, res) => {
+  await authService.verifyEmail(req.query.token);
+  res.status(enums.HTTP_CODES.NO_CONTENT_FOUND).send();
+});
 
 module.exports = {
-  registerUser,
-  loginUser
+  register,
+  login,
+  logout,
+  refreshTokens,
+  forgotPassword,
+  resetPassword,
+  sendVerificationEmail,
+  verifyEmail
 };

@@ -1,4 +1,5 @@
 const express = require("express");
+const config = require("../config/config");
 const authRoute = require("./auth");
 const userRoute = require("./user");
 const docsRoute = require("./docs");
@@ -31,8 +32,10 @@ const devRoutes = [
   }
 ];
 
-devRoutes.forEach((route) => {
-  router.use(route.path, route.route);
-});
+if (config.env === "development") {
+  devRoutes.forEach((route) => {
+    router.use(route.path, route.route);
+  });
+}
 
 module.exports = router;
